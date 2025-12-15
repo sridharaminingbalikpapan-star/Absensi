@@ -1,7 +1,49 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-<title>Absensi QR</title>
+<title>Login Absensi</title>
+<style>
+body{font-family:Arial;background:#f4f4f4}
+.box{max-width:320px;margin:80px auto;background:#fff;padding:20px;border-radius:10px}
+input,button{width:100%;padding:10px;margin-top:10px}
+button{background:#2563eb;color:#fff;border:none}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h3>Login Absensi</h3>
+<input id="id" placeholder="ID Pegawai">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="msg"></p>
+</div>
+
+<script>
+const api = 'URL_WEB_APP_SCRIPT';
+
+function login(){
+  const id = document.getElementById('id').value;
+  const password = document.getElementById('password').value;
+
+  fetch(`${api}?id=${id}&password=${password}`)
+  .then(r=>r.json())
+  .then(d=>{
+    if(!d.success){
+      msg.innerText='Login gagal';
+    }else{
+      localStorage.setItem('user', JSON.stringify(d));
+      if(d.role==='admin'){
+        window.location='admin.html';
+      }else{
+        window.location='absensi.html';
+      }
+    }
+  });
+}
+</script>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 <style>
 body{font-family:Arial;background:#f2f2f2}
@@ -30,4 +72,5 @@ hasil.innerHTML=`${d.nama} - ${d.status}`;
 </script>
 </body>
 </html>
+
 
