@@ -1,4 +1,8 @@
-<!DOCTYPE html>
+<script>
+const user = JSON.parse(localStorage.getItem('user'));
+if(!user){ location.href='login.html'; }
+</script>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,5 +76,6 @@ hasil.innerHTML=`${d.nama} - ${d.status}`;
 </script>
 </body>
 </html>
+
 
 
