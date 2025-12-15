@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>Login Absensi</title>
 <style>
 body{font-family:Arial;background:#f4f4f4}
@@ -44,37 +43,5 @@ function login(){
 }
 </script>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
-<style>
-body{font-family:Arial;background:#f2f2f2}
-.card{max-width:350px;margin:40px auto;background:#fff;padding:20px;border-radius:12px;text-align:center}
-</style>
-</head>
-<body>
-<div class="card">
-<h3>Absensi QR Code</h3>
-<div id="reader"></div>
-<p id="hasil"></p>
-</div>
-<script>
-const api='https://script.google.com/macros/s/AKfycbxewMusLdrRdb-XQI4sC93XLQUxXnnI_3v82wjiML5M/dev';
-new Html5Qrcode('reader').start(
-{facingMode:'environment'},
-{fps:10,qrbox:200},
-qr=>{
-fetch(api,{method:'POST',body:JSON.stringify({id:qr})})
-.then(r=>r.json())
-.then(d=>{
-hasil.innerHTML=`${d.nama} - ${d.status}`;
-});
-}
-);
-</script>
 </body>
 </html>
-
-
-
-
-
-
