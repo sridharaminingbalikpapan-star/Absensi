@@ -1,45 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Login Absensi</title>
+<meta charset="UTF-8">
+<title>Absensi QR Kantor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://unpkg.com/html5-qrcode"></script>
 <style>
-body{font-family:Arial;background:#f4f4f4}
-.box{max-width:320px;margin:80px auto;background:#fff;padding:20px;border-radius:10px}
-input,button{width:100%;padding:10px;margin-top:10px}
-button{background:#2563eb;color:#fff;border:none}
+body{font-family:Arial;background:#f4f6f8;margin:0;padding:0}
+.container{max-width:380px;margin:60px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+h2{text-align:center}
+input,button{width:100%;padding:10px;margin-top:10px;font-size:15px}
+button{background:#2563eb;color:#fff;border:none;border-radius:8px}
+#scanner{margin-top:15px}
+.hidden{display:none}
+#status{text-align:center;margin-top:10px;font-weight:bold}
+.logout{background:#dc2626;margin-top:15px}
 </style>
 </head>
 <body>
 
-<div class="box">
-<h3>Login Absensi</h3>
-<input id="id" placeholder="ID Pegawai">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
-<p id="msg"></p>
+<div class="container" id="loginBox">
+  <h2>Login Absensi</h2>
+  <input id="id" placeholder="ID Pegawai">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p id="loginMsg" style="text-align:center;color:red"></p>
+</div>
+
+<div class="container hidden" id="absenBox">
+  <h2>Scan QR Absensi</h2>
+  <div id="scanner"></div>
+  <div id="status"></div>
+  <button class="logout" onclick="logout()">Logout</button>
 </div>
 
 <script>
-const api = 'URL_WEB_APP_SCRIPT';
+const API_URL = 'URL_WEB_APP_SCRIPT'; // ganti dengan URL Apps Script
+let qrScanner;
+
+// cek login saat load
+const user = JSON.parse(localStorage.getItem('user'));
+if(user){
+  showAbsensi();
+}
 
 function login(){
   const id = document.getElementById('id').value;
   const password = document.getElementById('password').value;
 
-  fetch(`${api}?id=${id}&password=${password}`)
+  fetch(`${API_URL}?id=${id}&password=${password}`)
   .then(r=>r.json())
   .then(d=>{
     if(!d.success){
-      msg.innerText='Login gagal';
+      loginMsg.innerText='Login gagal';
     }else{
       localStorage.setItem('user', JSON.stringify(d));
-      if(d.role==='admin'){
-        window.location='admin.html';
-      }else{
-        window.location='absensi.html';
-      }
+      showAbsensi();
     }
   });
+}
+
+function showAbsensi(){
+  document.getElementById('loginBox').classList.add('hidden');
+  document.getElementById('absenBox').classList.remove('hidden');
+
+  qrScanner = new Html5Qrcode('scanner');
+  qrScanner.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: 220 },
+    qr => {
+      kirimAbsensi(qr);
+      qrScanner.stop();
+    }
+  );
+}
+
+function kirimAbsensi(id){
+  fetch(API_URL,{
+    method:'POST',
+    body:JSON.stringify({id:id})
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    status.innerText = d.nama + ' - ' + d.status;
+  });
+}
+
+function logout(){
+  localStorage.clear();
+  location.reload();
 }
 </script>
 
