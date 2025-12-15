@@ -1,37 +1,29 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Absensi Kantor</title>
+<title>Absensi QR</title>
 <script src="https://unpkg.com/html5-qrcode"></script>
 <style>
-body{font-family:Arial;background:#f4f6f8}
-.card{max-width:420px;margin:40px auto;background:#fff;padding:20px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
-h1{text-align:center}
-#result{font-size:18px;text-align:center;margin-top:10px}
+body{font-family:Arial;background:#f2f2f2}
+.card{max-width:350px;margin:40px auto;background:#fff;padding:20px;border-radius:12px;text-align:center}
 </style>
 </head>
 <body>
 <div class="card">
-<h1>Absensi QR Code</h1>
+<h3>Absensi QR Code</h3>
 <div id="reader"></div>
-<div id="result"></div>
+<p id="hasil"></p>
 </div>
-
-
 <script>
-const api = 'URL_WEB_APP_SCRIPT';
+const api='URL_WEB_APP_SCRIPT';
 new Html5Qrcode('reader').start(
-{ facingMode: 'environment' },
-{ fps: 10, qrbox: 250 },
-qr => {
-fetch(api, {
-method:'POST',
-body:JSON.stringify({id:qr})
-})
+{facingMode:'environment'},
+{fps:10,qrbox:200},
+qr=>{
+fetch(api,{method:'POST',body:JSON.stringify({id:qr})})
 .then(r=>r.json())
-.then(res=>{
-document.getElementById('result').innerHTML = `${res.nama} - ${res.status}`;
+.then(d=>{
+hasil.innerHTML=`${d.nama} - ${d.status}`;
 });
 }
 );
